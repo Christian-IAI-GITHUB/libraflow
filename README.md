@@ -1,59 +1,197 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+### Phase 1 - Installation & Configuration
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Allons-y etape par etape. Suis chaque commande dans l'ordre.
 
-## About Laravel
+#### Etape 1 - Verifier que tout est pret
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Ouvre CMD (invite de commandes) et tape ces commandes pour verifier:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```bash
+php -v
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Tu dois voir quelque chose comme PHP 8.2.x. Si tu vois une erreur, PHP n'est pas dans ton PATH.
 
-## Learning Laravel
+```bash
+composer -v
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Tu dois voir la version de Composer. Si `composer` n'est pas reconnu, telecharge-le sur getcomposer.org.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+node -v
+npm -v
+```
 
-## Laravel Sponsors
+Node.js est necessaire pour Tailwind CSS. Si absent, telecharge-le sur nodejs.org.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### Etape 2 - Creer le projet Laravel
 
-### Premium Partners
+Dans CMD, navigue vers le dossier `htdocs` de XAMPP:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+cd C:\xampp\htdocs
+```
 
-## Contributing
+Puis cree le projet:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer create-project laravel/laravel libraflow
+```
 
-## Code of Conduct
+Cela va telecharger Laravel dans `C:\xampp\htdocs\libraflow`. Ca prend 2-3 minutes.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Entre dans le dossier:
 
-## Security Vulnerabilities
+```bash
+cd libraflow
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### Etape 3 - Creer la base de donnees
 
-## License
+1. Ouvre XAMPP Control Panel puis clique **Start** sur Apache et MySQL.
+2. Ouvre ton navigateur puis va sur `http://localhost/phpmyadmin`.
+3. Clique sur **Nouvelle base de donnees** (a gauche).
+4. Nom: `libraflow`, puis clique **Creer**.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### Etape 4 - Configurer le fichier .env
+
+Dans le dossier `libraflow`, ouvre le fichier `.env` avec VS Code ou Notepad++.
+Trouve ces lignes et modifie-les:
+
+```env
+APP_NAME=LibraFlow
+APP_URL=http://localhost/libraflow/public
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=libraflow
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Avec XAMPP, le mot de passe MySQL est vide par defaut. Laisse `DB_PASSWORD=` vide.
+
+#### Etape 5 - Ajouter la colonne role aux utilisateurs
+
+Avant d'installer Breeze, on va preparer la migration users pour y ajouter les roles.
+Ouvre le fichier:
+
+`database/migrations/xxxx_create_users_table.php`
+
+Trouve le bloc `Schema::create` et ajoute la ligne `role`:
+
+```php
+Schema::create('users', function (Blueprint $table) {
+	$table->id();
+	$table->string('name');
+	$table->string('email')->unique();
+	$table->timestamp('email_verified_at')->nullable();
+	$table->string('password');
+	$table->enum('role', ['admin', 'bibliothecaire', 'lecteur'])->default('lecteur'); // <- AJOUTE CETTE LIGNE
+	$table->rememberToken();
+	$table->timestamps();
+});
+```
+
+#### Etape 6 - Installer Laravel Breeze
+
+Dans CMD (toujours dans le dossier `libraflow`):
+
+```bash
+composer require laravel/breeze --dev
+```
+
+Puis:
+
+```bash
+php artisan breeze:install blade
+```
+
+Reponds `yes` si on te demande confirmation. Cela installe l'authentification avec les vues Blade.
+
+Installe les dependances JS:
+
+```bash
+npm install
+npm run build
+```
+
+#### Etape 7 - Lancer les migrations
+
+```bash
+php artisan migrate
+```
+
+Tu dois voir quelque chose comme:
+
+```text
+Running migrations...
+... create_users_table
+... create_password_reset_tokens_table
+```
+
+#### Etape 8 - Modifier le modele User
+
+Ouvre `app/Models/User.php` et modifie le tableau `$fillable` pour y ajouter `role`:
+
+```php
+protected $fillable = [
+	'name',
+	'email',
+	'password',
+	'role', // <- AJOUTE CETTE LIGNE
+];
+```
+
+Ajoute aussi ces methodes pratiques en bas de la classe, juste avant le `}` final:
+
+```php
+// Verifie si l'utilisateur est admin
+public function isAdmin(): bool
+{
+	return $this->role === 'admin';
+}
+
+// Verifie si l'utilisateur est bibliothecaire
+public function isBibliothecaire(): bool
+{
+	return $this->role === 'bibliothecaire';
+}
+
+// Verifie si l'utilisateur est lecteur
+public function isLecteur(): bool
+{
+	return $this->role === 'lecteur';
+}
+```
+
+Pourquoi ces methodes ? En soutenance, tu expliqueras que plutot que de comparer `$user->role === 'admin'` partout dans le code, on centralise la logique dans le modele. C'est le principe de Single Responsibility.
+
+#### Etape 9 - Tester que ca marche
+
+Lance le serveur Laravel:
+
+```bash
+php artisan serve
+```
+
+Ouvre `http://127.0.0.1:8000` dans ton navigateur.
+Tu dois voir la page d'accueil Laravel avec les liens Login et Register en haut a droite.
+
+Teste en creant un compte via Register. Si ca fonctionne, la Phase 1 est terminee.
+
+### Resume de ce qu'on a fait
+
+| Fichier modifie | Ce qu'on a fait |
+| --- | --- |
+| `.env` | Connexion a la base MySQL de XAMPP |
+| `create_users_table.php` | Ajout de la colonne `role` |
+| `User.php` | Ajout de `role` dans `$fillable` + 3 methodes helper |
+
+Dis-moi quand la Phase 1 est validee (page d'accueil visible + register qui fonctionne) et on attaque la Phase 2 - Migrations & Modeles Eloquent.
+
+
+
+
