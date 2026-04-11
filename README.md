@@ -1,3 +1,87 @@
+# LibraFlow 📚
+Système de gestion de bibliothèque scolaire numérique — Projet Laravel 12
+
+## Présentation
+LibraFlow numérise la gestion d'une bibliothèque scolaire :
+catalogue de livres, emprunts, retours, réservations et pénalités de retard.
+
+## Comptes de démonstration
+| Rôle | Email | Mot de passe |
+|------|-------|--------------|
+| Admin | admin@libraflow.com | password |
+| Bibliothécaire | biblio@libraflow.com | password |
+| Lecteur | lecteur@libraflow.com | password |
+
+## Installation
+
+### Prérequis
+- PHP 8.2+
+- Composer
+- MySQL (XAMPP)
+- Node.js + npm
+
+### Étapes
+
+1. Cloner le projet
+git clone https://github.com/votre-compte/libraflow.git
+cd libraflow
+
+2. Installer les dépendances PHP
+composer install
+
+3. Installer les dépendances JS
+npm install && npm run build
+
+4. Configurer l'environnement
+cp .env.example .env
+php artisan key:generate
+
+5. Configurer la base de données dans .env
+DB_DATABASE=libraflow
+DB_USERNAME=root
+DB_PASSWORD=
+
+6. Lancer les migrations et seeders
+php artisan migrate:fresh --seed
+
+7. Créer le lien de stockage
+php artisan storage:link
+
+8. Lancer le serveur
+php artisan serve
+
+Accéder à http://127.0.0.1:8000
+
+## Fonctionnalités
+- Catalogue livres avec recherche (titre, auteur, catégorie)
+- Affichage disponibilité en temps réel
+- Gestion emprunts et retours
+- Calcul automatique des pénalités (Carbon)
+- File d'attente de réservations
+- Notification email au retour d'un livre (Mailable)
+- Paramètres configurables (durée emprunt, pénalité/jour)
+- 3 rôles : Admin, Bibliothécaire, Lecteur
+
+## Architecture technique
+- Laravel 12 avec Breeze (auth)
+- Eloquent Observer (LoanObserver)
+- Scopes : overdue(), available(), search()
+- Policies : BookPolicy, LoanPolicy, ReservationPolicy
+- Middleware : CheckRole
+- Mailable : ReservationDisponibleMail
+- Carbon pour toutes les dates
+
+## Structure des branches Git
+- main : version stable finale
+- phase-2 : migrations et modèles
+- phase-3 : rôles et policies
+- phase-4 : controllers
+- phase-5 : vues Blade
+- phase-6 : finalisation
+
+
+
+
 ### Phase 1 - Installation & Configuration
 
 Allons-y etape par etape. Suis chaque commande dans l'ordre.
