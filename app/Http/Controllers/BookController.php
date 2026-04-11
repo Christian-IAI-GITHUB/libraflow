@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -80,9 +82,9 @@ class BookController extends Controller
     {
         // Réservation active de l'utilisateur connecté pour ce livre
         $maReservation = null;
-        if (auth()->check()) {
+        if (Auth::check()) {
             $maReservation = $book->reservations()
-                                  ->where('user_id', auth()->id())
+                                  ->where('user_id', Auth::id())
                                   ->where('status', 'en_attente')
                                   ->first();
         }
@@ -115,13 +117,22 @@ class BookController extends Controller
             'category'     => 'required|string|max:100',
             'total_copies' => 'required|integer|min:1',
             'cover_image'  => 'nullable|image|max:2048',
+            'remove_cover_image' => 'nullable|boolean',
         ]);
 
         // Recalcule available_copies si total_copies change
         $diff = $validated['total_copies'] - $book->total_copies;
         $validated['available_copies'] = max(0, $book->available_copies + $diff);
 
+        if ($request->boolean('remove_cover_image') && $book->cover_image) {
+            Storage::disk('public')->delete($book->cover_image);
+            $validated['cover_image'] = null;
+        }
+
         if ($request->hasFile('cover_image')) {
+            if ($book->cover_image && empty($validated['remove_cover_image'])) {
+                Storage::disk('public')->delete($book->cover_image);
+            }
             $validated['cover_image'] = $request->file('cover_image')
                                                ->store('covers', 'public');
         }

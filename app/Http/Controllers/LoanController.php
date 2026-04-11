@@ -9,6 +9,7 @@ use App\Models\Reservation;
 use App\Mail\ReservationDisponibleMail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class LoanController extends Controller
@@ -131,7 +132,7 @@ class LoanController extends Controller
     // Espace personnel du lecteur
     public function monEspace()
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Emprunts en cours
         $empruntsEnCours = Loan::with('book')

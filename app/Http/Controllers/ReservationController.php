@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
@@ -32,7 +33,7 @@ class ReservationController extends Controller
         ]);
 
         $book = Book::findOrFail($validated['book_id']);
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Vérifie que le livre est bien indisponible
         // (on réserve seulement si pas d'exemplaire libre)

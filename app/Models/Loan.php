@@ -62,8 +62,8 @@ class Loan extends Model
         // Récupère le montant journalier depuis les settings
         $dailyRate = (float) Setting::getValue('penalite_journaliere', 100);
 
-        // Nombre de jours de retard
-        $daysLate = Carbon::now()->diffInDays($this->due_at);
+        // Nombre de jours de retard (toujours positif)
+        $daysLate = (int) floor($this->due_at->diffInDays(Carbon::now()));
 
         return $daysLate * $dailyRate;
     }

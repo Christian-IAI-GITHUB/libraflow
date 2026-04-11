@@ -56,4 +56,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    // Route GET pour test rapide — peut aussi se déconnecter via URL
+    Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
+        ->name('logout-get');
 });
