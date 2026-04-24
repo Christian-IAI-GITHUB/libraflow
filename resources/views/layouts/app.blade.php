@@ -43,6 +43,7 @@
             background-position: center;
             background-attachment: fixed;
             min-height: 100vh;
+            padding-top: 4rem;
         }
 
         body::before {
@@ -68,12 +69,22 @@
         
         /* Navbar */
         .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
             box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
         }
         
+        body {
+            padding-top: 4rem;
+        }
+        
         .nav-link {
             position: relative;
+        
             color: rgba(255, 255, 255, 0.85);
             font-weight: 500;
             font-size: 0.875rem;
@@ -188,8 +199,7 @@
             overflow: hidden;
         }
         
-        .user-menu:hover .dropdown-menu,
-        .user-menu:focus-within .dropdown-menu {
+        .dropdown-menu.open {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -342,8 +352,8 @@
                 {{-- Auth --}}
                 <div class="flex items-center gap-3">
                     @auth
-                        <div class="user-menu">
-                            <button class="user-button" type="button">
+                        <div class="user-menu" style="position:relative;">
+                            <button class="user-button" type="button" onclick="toggleDropdown()">
                                 <div class="user-avatar">
                                     {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
                                 </div>
@@ -356,7 +366,7 @@
                                 </svg>
                             </button>
 
-                            <div class="dropdown-menu">
+                            <div id="dropdown" class="dropdown-menu">
                                 <a href="{{ route('profile.edit') }}" class="dropdown-item">
                                     Mon profil
                                 </a>
@@ -370,9 +380,7 @@
                             </div>
                         </div>
                     @else
-                        <a href="{{ route('login') }}" class="nav-link">
-                            Connexion
-                        </a>
+                        <a href="{{ route('login') }}" class="nav-link">Connexion</a>
                     @endauth
                 </div>
             </div>
@@ -406,11 +414,42 @@
         @endif
     </div>
 
+    {{-- HEADER (optionnel - pour les pages avec en-tête personnalisé) --}}
+    @if (isset($header))
+        <div class="bg-white shadow-sm mb-6 sticky top-16 z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                {{ $header }}
+            </div>
+        </div>
+    @endif
+
     {{-- CONTENU --}}
     <main class="main-content">
         @yield('content')
+        {{ $slot ?? '' }}
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const button = document.querySelector('.user-button');
+            const dropdown = document.getElementById('dropdown');
 
+            if (button && dropdown) {
+                button.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = dropdown.classList.contains('open');
+                    if (isOpen) {
+                        dropdown.classList.remove('open');
+                    } else {
+                        dropdown.classList.add('open');
+                    }
+                });
+
+                document.addEventListener('click', function () {
+                    dropdown.classList.remove('open');
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

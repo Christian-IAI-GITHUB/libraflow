@@ -17,7 +17,7 @@
 
     {{-- Barre de recherche et filtres --}}
     <form method="GET" action="{{ route('books.index') }}"
-        class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+        class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-[8%]">
         <div class="flex flex-wrap gap-3">
 
             {{-- Recherche texte --}}
@@ -69,13 +69,26 @@
             @foreach ($books as $book)
                 <a href="{{ route('books.show', $book) }}"
                     class="block bg-white rounded-xl shadow-sm border border-gray-200
-                          hover:shadow-md transition overflow-hidden group">
+                          hover:shadow-md transition overflow-visible group relative">
 
                     {{-- Couverture --}}
-                    <div class="h-40 bg-emerald-50 flex items-center justify-center overflow-hidden">
+                    <div class="h-40 bg-emerald-50 flex items-center justify-center overflow-hidden rounded-t-xl">
                         @if ($book->cover_image)
                             <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}"
-                                class="block h-full w-full object-cover object-center group-hover:scale-105 transition">
+                                class="block h-[90%] w-[90%] object-cover object-center transition duration-300">
+
+                            {{-- Preview pleine couverture au hover --}}
+                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-50
+                                        opacity-0 group-hover:opacity-100 pointer-events-none
+                                        transition-all duration-300 scale-90 group-hover:scale-100">
+                                <div class="bg-white rounded-xl shadow-2xl border border-gray-200 p-1">
+                                    <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}"
+                                        class="w-44 h-56 object-contain rounded-lg">
+                                </div>
+                                {{-- Petite flèche --}}
+                                <div class="w-2 h-2 bg-white border-r border-b border-gray-200
+                                            rotate-45 mx-auto -mt-1.5 shadow-sm"></div>
+                            </div>
                         @else
                             <span class="text-5xl">📖</span>
                         @endif

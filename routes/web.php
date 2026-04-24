@@ -17,27 +17,9 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Routes accessibles à tous les utilisateurs connectés
-Route::middleware(['auth'])->group(function () {
-
-    // Breeze profile routes
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Catalogue des livres (lecture pour tous)
-    Route::get('/books', [BookController::class, 'index'])->name('books.index');
-    Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
-
-    // Réservations (le lecteur peut créer/annuler les siennes)
-    Route::resource('reservations', ReservationController::class)
-         ->only(['index', 'store', 'destroy']);
-
-    // Historique et profil du lecteur
-    Route::get('/mon-espace', [LoanController::class, 'monEspace'])->name('lecteur.espace');
-});
-
 // Routes réservées à admin + bibliothécaire
+// IMPORTANT : déclarées AVANT le groupe auth pour que /books/create
+// soit enregistré avant la route wildcard /books/{book}
 Route::middleware(['auth', 'role:admin,bibliothecaire'])->group(function () {
 
     // Gestion complète du catalogue
@@ -51,6 +33,27 @@ Route::middleware(['auth', 'role:admin,bibliothecaire'])->group(function () {
 
     // Vue des retards
     Route::get('/retards', [LoanController::class, 'retards'])->name('loans.retards');
+});
+
+// Routes accessibles à tous les utilisateurs connectés
+Route::middleware(['auth'])->group(function () {
+
+    // Breeze profile routes
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Catalogue des livres (lecture pour tous)
+    Route::get('/books', [BookController::class, 'index'])->name('books.index');
+    Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+
+    // Réservations
+    Route::resource('reservations', ReservationController::class);
+    Route::patch('/reservations/{reservation}/confirm', [ReservationController::class, 'confirm'])
+         ->name('reservations.confirm');
+
+    // Historique et profil du lecteur
+    Route::get('/mon-espace', [LoanController::class, 'monEspace'])->name('lecteur.espace');
 });
 
 // Routes réservées à l'admin uniquement

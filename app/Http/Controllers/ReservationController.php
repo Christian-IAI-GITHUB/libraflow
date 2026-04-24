@@ -16,11 +16,21 @@ class ReservationController extends Controller
         $this->authorize('viewAny', Reservation::class);
 
         $reservations = Reservation::with(['book', 'user'])
-                                   ->enAttente()
-                                   ->orderBy('reserved_at')
+                                   ->orderBy('reserved_at', 'desc')
                                    ->paginate(15);
 
         return view('reservations.index', compact('reservations'));
+    }
+
+    // Formulaire de création de réservation
+    public function create()
+    {
+        $this->authorize('create', Reservation::class);
+
+        // Récupère tous les livres pour afficher dans le select
+        $books = Book::orderBy('title')->get();
+
+        return view('reservations.create', compact('books'));
     }
 
     // Créer une réservation
@@ -72,13 +82,49 @@ class ReservationController extends Controller
         );
     }
 
-    // Annuler une réservation
-    public function destroy(Reservation $reservation)
+    // Formulaire pour modifier une réservation
+    public function edit(Reservation $reservation)
     {
         $this->authorize('update', $reservation);
 
-        $reservation->update(['status' => 'annulee']);
+        $books = Book::orderBy('title')->get();
 
-        return back()->with('success', 'Réservation annulée.');
+        return view('reservations.edit', compact('reservation', 'books'));
+    }
+
+    // Mettre à jour une réservation
+    public function update(Request $request, Reservation $reservation)
+    {
+        $this->authorize('update', $reservation);
+
+        $validated = $request->validate([
+            'book_id' => 'required|exists:books,id',
+            'status'  => 'required|in:en_attente,confirmee,annulee',
+        ]);
+
+        $reservation->update($validated);
+
+        return redirect()->route('reservations.index')
+                       ->with('success', 'Réservation mise à jour.');
+    }
+
+    // Confirmer une réservation (pour le bibliothécaire)
+    public function confirm(Reservation $reservation)
+    {
+        $this->authorize('update', $reservation);
+
+        $reservation->update(['status' => 'confirmee']);
+
+        return back()->with('success', 'Réservation confirmée.');
+    }
+
+    // Annuler/Supprimer une réservation
+    public function destroy(Reservation $reservation)
+    {
+        $this->authorize('delete', $reservation);
+
+        $reservation->delete();
+
+        return back()->with('success', 'Réservation supprimée.');
     }
 }

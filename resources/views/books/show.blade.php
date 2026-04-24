@@ -3,30 +3,30 @@
 
 @section('content')
 
-    <div class="max-w-3xl mx-auto">
-        <a href="{{ route('books.index') }}" class="text-sm text-emerald-700 hover:underline mb-4 inline-block">
+    <div class="max-w-4xl mx-auto">
+        <a href="{{ route('books.index') }}" class="text-sm text-emerald-700 hover:underline mb-5 inline-block">
             ← Retour au catalogue
         </a>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex gap-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 flex gap-10">
 
             {{-- Couverture --}}
             <div
-                class="w-36 h-48 bg-emerald-50 rounded-lg flex items-center
-                    justify-center overflow-hidden flex-shrink-0">
+                class="w-52 h-72 bg-emerald-50 rounded-xl flex items-center
+                    justify-center overflow-hidden flex-shrink-0 shadow-md">
                 @if ($book->cover_image)
                     <img src="{{ asset('storage/' . $book->cover_image) }}"
                         class="block h-full w-full object-cover object-center">
                 @else
-                    <span class="text-6xl">📖</span>
+                    <span class="text-7xl">📖</span>
                 @endif
             </div>
 
             {{-- Détails --}}
             <div class="flex-1">
-                <h1 class="text-2xl font-bold text-gray-800 mb-1">{{ $book->title }}</h1>
-                <p class="text-gray-500 mb-1">par <strong>{{ $book->author }}</strong></p>
-                <p class="text-sm text-gray-400 mb-4">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ $book->title }}</h1>
+                <p class="text-gray-500 text-base mb-2">par <strong>{{ $book->author }}</strong></p>
+                <p class="text-sm text-gray-400 mb-6">
                     Catégorie : {{ $book->category }}
                     @if ($book->isbn)
                         · ISBN : {{ $book->isbn }}
@@ -34,11 +34,11 @@
                 </p>
 
                 {{-- Disponibilité claire (réponse à la question UX du prof) --}}
-                <div class="bg-gray-50 rounded-lg p-4 mb-4">
-                    <p class="text-sm font-semibold text-gray-600 mb-2">
+                <div class="bg-gray-50 rounded-xl p-5 mb-5">
+                    <p class="text-sm font-semibold text-gray-600 mb-3">
                         Disponibilité
                     </p>
-                    <div class="flex gap-1 mb-2">
+                    <div class="flex flex-wrap gap-1.5 mb-3">
                         @for ($i = 0; $i < $book->total_copies; $i++)
                             <div
                                 class="w-8 h-8 rounded-md flex items-center
@@ -112,7 +112,7 @@
 
                 {{-- Actions admin/biblio --}}
                 @can('update', $book)
-                    <div class="flex gap-2 mt-4">
+                    <div class="flex gap-3 mt-6">
                         <a href="{{ route('books.edit', $book) }}"
                             class="text-sm border border-gray-300 px-4 py-2 rounded-lg
                               hover:bg-gray-50 transition">

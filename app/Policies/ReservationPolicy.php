@@ -37,9 +37,9 @@ class ReservationPolicy
         return true;
     }
 
-    // Seul l'admin supprime une réservation
+    // Seul l'admin et le bibliothécaire peuvent supprimer une réservation
     public function delete(User $user, Reservation $reservation): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, ['admin', 'bibliothecaire']);
     }
 }
