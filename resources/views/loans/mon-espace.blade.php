@@ -6,6 +6,22 @@
     Mon espace — {{ auth()->user()->name }}
 </h1>
 
+{{-- Boutons d'action rapide --}}
+<div class="mb-6 flex gap-3">
+    <a href="{{ route('reservations.create') }}" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Faire une réservation
+    </a>
+    <a href="{{ route('books.index') }}" class="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition-colors inline-flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C6.5 6.253 2 10.998 2 17.25S6.5 28 12 28s10-4.745 10-10.75C22 10.998 17.5 6.253 12 6.253z" />
+        </svg>
+        Voir le catalogue
+    </a>
+</div>
+
 {{-- Pénalités (affichage bienveillant, réponse à la question UX du prof) --}}
 @if($totalPenalites > 0)
     <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex

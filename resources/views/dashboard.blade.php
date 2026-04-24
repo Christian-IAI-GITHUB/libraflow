@@ -216,7 +216,7 @@
 
 <div style="margin-bottom:28px;">
     <h1 style="font-size:1.6rem; font-weight:700; color:#0f172a; margin:0 0 4px;">
-        Bonjour, {{ auth()->user()->name }} 👋
+        Bonjour, {{ auth()->user()->name }}
     </h1>
     <p style="color:#64748b; font-size:0.9rem; margin:0;">
         Voici l'état de vos emprunts.
